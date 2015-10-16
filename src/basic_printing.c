@@ -1,5 +1,7 @@
 #include "basic_printing.h"
 
+int kill_signal = 0;
+
 void basic_printing1 () {
   int ch;
 
@@ -61,5 +63,56 @@ void basic_printing3 () {
   }
 
   getch();
+  endwin();
+}
+
+void basic_printing4 () {
+  const char* s = "James Carson";
+  int row,col;
+
+  initscr();
+  getmaxyx(stdscr,row,col);
+
+  mvprintw(row/2,(col - strlen(s))/2,s);
+  mvprintw(row-2,0,"rows: %d, cols: %d",row,col);
+
+  refresh();
+  getch();
+  endwin();
+}
+
+void *print_stuff () {
+  int foo = 0;
+  int bar = 0;
+
+  while(true) {
+    if (kill_signal) {
+      pthread_exit(NULL);
+    } else {
+      mvprintw(0,0,"foo: %d, bar: %d",foo,bar);
+      refresh();
+      foo += 2;
+      bar += 3;
+      usleep(100000);
+    }
+  }
+}
+
+void *get_input () {
+  getch();
+  kill_signal = 1;
+  pthread_exit(NULL);
+}
+
+void basic_printing5 () {
+  pthread_t printing_thread;
+  pthread_t input_thread;
+
+  initscr();
+  pthread_create( &printing_thread, NULL, print_stuff, NULL );
+  pthread_create( &input_thread, NULL, get_input, NULL );
+  pthread_join(printing_thread, NULL);
+  pthread_join(input_thread, NULL);
+
   endwin();
 }

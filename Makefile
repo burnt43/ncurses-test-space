@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -c
-LFLAGS = -lncurses
+LFLAGS = -lncurses -lpthread
 SRCDIR = src
 OBJS = $(SRCDIR)/hello_world.o $(SRCDIR)/basic_printing.o $(SRCDIR)/main.o
 
