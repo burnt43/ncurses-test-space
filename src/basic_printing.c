@@ -116,3 +116,16 @@ void basic_printing5 () {
 
   endwin();
 }
+
+void basic_printing6 () {
+  char *s = "Enter a String: ";
+  char *input_string = (char*)malloc(64*sizeof(char));
+  int row,col;
+  initscr();
+  getmaxyx(stdscr,row,col);
+  mvprintw(row/2,(col-strlen(s))/2,s);
+  getstr(input_string);
+  mvprintw(row-2,0,"You enter %s",input_string);
+  getch();
+  endwin();
+}
