@@ -215,12 +215,75 @@ int linked_list_push(LINKED_LIST *list, char *s) {
   return 0;
 }
 
+int linked_list_append_list(LINKED_LIST *first_list, LINKED_LIST *second_list) {
+  LINKED_LIST *iterator = second_list;
+  while ( iterator != NULL ) {
+    linked_list_push(first_list,iterator->value);
+    iterator = iterator->next;
+  }
+  return 0;
+}
+
+LINKED_LIST* strsplit(char *s,const char *delim) {
+  LINKED_LIST *list = linked_list_new();
+  char *token;
+
+  token = strtok(s,delim);
+  /*
+  while ( token != NULL ) {
+    linked_list_push(list,token);
+    token = strtok(NULL,&delim);
+  }
+  */
+  return list;
+}
+
 void basic_printing8 () {
   LINKED_LIST *list;
-  list = linked_list_new();
-  linked_list_push(list,"JAMES");
-  linked_list_push(list,"CARSON");
-  linked_list_push(list,"RED BANK");
-  linked_list_print(list);
-  linked_list_free(list);
+  FILE *file;
+  char *read_string;
+  const int WIDTH = 120;
+  int max_row,max_col;
+  int current_line = 0;
+  int read_char;
+
+  list       = linked_list_new();
+  file       = fopen("./data/file2.txt","r");
+  read_string = (char*)malloc(WIDTH * sizeof(char));
+
+  while ( (read_string = fgets(read_string,WIDTH,file)) != NULL ) {
+    linked_list_push(list,read_string);
+  }
+
+  initscr();
+  noecho();
+  keypad(stdscr,TRUE);
+  getmaxyx(stdscr,max_row,max_col);
+  while ( true ) {
+    move(0,0);
+
+    int i = 0;
+    int upper_range = current_line+(max_row-10);
+    for ( LINKED_LIST *iterator = list; iterator != NULL; iterator = iterator->next ) {
+      if ( i >= current_line && i < upper_range ) {
+        printw("%s\n",iterator->value);
+      } else if ( i >= upper_range ) {
+        break;
+      }
+      i++;
+    }
+    refresh();
+    read_char = getch();
+    switch (read_char) {
+      case KEY_DOWN:
+        current_line++;
+        break;
+      case KEY_UP:
+        if ( current_line > 0 ) {
+          current_line--;
+        }
+        break;
+    }
+  }
+  endwin();
 }
