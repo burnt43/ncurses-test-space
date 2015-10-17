@@ -2,7 +2,7 @@
 #include "basic_printing.h"
 
 int main (int argc, char** argv) {
-  const int NUM_FUNCTIONS = 8;
+  const int NUM_FUNCTIONS = 9;
   void (*functions[NUM_FUNCTIONS])();
   functions[0] = hello_world;
   functions[1] = basic_printing1;
@@ -12,6 +12,7 @@ int main (int argc, char** argv) {
   functions[5] = basic_printing5;
   functions[6] = basic_printing6;
   functions[7] = basic_printing7;
+  functions[8] = basic_printing8;
 
   if ( argc == 2 ) {
     functions[atoi(argv[1])]();

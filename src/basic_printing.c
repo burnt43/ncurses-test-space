@@ -152,3 +152,75 @@ void basic_printing7 () {
   getch();
   endwin();
 }
+
+typedef struct _linked_list {
+  char   *value;
+  struct _linked_list *next;
+} LINKED_LIST;
+
+LINKED_LIST* linked_list_new() {
+  LINKED_LIST *list = (LINKED_LIST*)malloc(sizeof(LINKED_LIST));
+  list->value = NULL;
+  list->next  = NULL;
+  return list;
+}
+
+int linked_list_free(LINKED_LIST *list) {
+  LINKED_LIST *iterator = list;
+  while ( iterator != NULL ) {
+    char *p_value       = iterator->value;
+    LINKED_LIST *p_next = iterator->next;
+    printf("freeing memory for string: %s @ %p\n",p_value,p_value);
+    free(p_value);
+    printf("freeing memory for linked_list @ %p\n",iterator);
+    free(iterator);
+    iterator = p_next;
+  }
+}
+
+LINKED_LIST* linked_list_get_last_element(LINKED_LIST *list) {
+  LINKED_LIST *iterator = list;
+  while ( iterator->next != NULL ) {
+    iterator = iterator->next;
+  }
+  return iterator;
+}
+
+void linked_list_print(LINKED_LIST *list) {
+  LINKED_LIST *iterator = list;
+  while ( iterator != NULL ) {
+    printf("%s->",iterator->value);
+    iterator = iterator->next;
+  }
+  printf("EOL\n");
+}
+
+int linked_list_has_value(LINKED_LIST *list) {
+  return list->value != NULL;
+}
+
+int linked_list_push(LINKED_LIST *list, char *s) {
+  char *allocated_string = (char*)malloc( strlen(s) * sizeof(char) );
+  strcpy(allocated_string,s);
+
+  if ( linked_list_has_value(list) ) {
+    LINKED_LIST *last_element = linked_list_get_last_element(list);
+    LINKED_LIST *new_element  = linked_list_new();
+    new_element->value = allocated_string;
+    last_element->next = new_element;
+  } else {
+    list->value = allocated_string;
+  }
+
+  return 0;
+}
+
+void basic_printing8 () {
+  LINKED_LIST *list;
+  list = linked_list_new();
+  linked_list_push(list,"JAMES");
+  linked_list_push(list,"CARSON");
+  linked_list_push(list,"RED BANK");
+  linked_list_print(list);
+  linked_list_free(list);
+}
