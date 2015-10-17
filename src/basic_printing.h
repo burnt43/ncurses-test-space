@@ -3,6 +3,7 @@
 #include<string.h>
 #include<pthread.h>
 #include<unistd.h>
+#include<assert.h>
 
 void basic_printing1();
 void basic_printing2();

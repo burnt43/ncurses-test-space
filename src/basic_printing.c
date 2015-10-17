@@ -179,18 +179,14 @@ int linked_list_free(LINKED_LIST *list) {
 }
 
 LINKED_LIST* linked_list_get_last_element(LINKED_LIST *list) {
-  LINKED_LIST *iterator = list;
-  while ( iterator->next != NULL ) {
-    iterator = iterator->next;
-  }
+  LINKED_LIST *iterator;
+  for( iterator = list; iterator->next != NULL; iterator = iterator->next );
   return iterator;
 }
 
 void linked_list_print(LINKED_LIST *list) {
-  LINKED_LIST *iterator = list;
-  while ( iterator != NULL ) {
+  for( LINKED_LIST *iterator; iterator != NULL; iterator = iterator->next ) {
     printf("%s->",iterator->value);
-    iterator = iterator->next;
   }
   printf("EOL\n");
 }
@@ -216,29 +212,37 @@ int linked_list_push(LINKED_LIST *list, char *s) {
 }
 
 int linked_list_append_list(LINKED_LIST *first_list, LINKED_LIST *second_list) {
-  LINKED_LIST *iterator = second_list;
-  while ( iterator != NULL ) {
+  for ( LINKED_LIST *iterator = second_list; iterator != NULL; iterator = iterator->next ) {
     linked_list_push(first_list,iterator->value);
-    iterator = iterator->next;
   }
   return 0;
 }
 
-LINKED_LIST* strsplit(char *s,const char *delim) {
-  LINKED_LIST *list = linked_list_new();
-  char *token;
-
-  token = strtok(s,delim);
-  /*
-  while ( token != NULL ) {
-    linked_list_push(list,token);
-    token = strtok(NULL,&delim);
-  }
-  */
-  return list;
-}
-
 void basic_printing8 () {
+  // ASSERTIONS
+  LINKED_LIST *test_list = linked_list_new();
+  LINKED_LIST *caboose   = linked_list_new();
+
+  assert( test_list->value == NULL );
+  assert( test_list->next == NULL );
+
+  linked_list_push(test_list,"foo");
+  assert( strcmp(test_list->value,"foo") == 0 );
+  assert( test_list->next == NULL );
+  assert( strcmp(linked_list_get_last_element(test_list)->value,"foo") == 0 );
+  assert( linked_list_get_last_element(test_list)->next == NULL );
+
+  linked_list_push(test_list,"bar");
+  assert( strcmp(test_list->value,"foo") == 0 );
+  assert( test_list->next != NULL );
+  assert( strcmp(linked_list_get_last_element(test_list)->value,"bar") == 0 );
+  assert( linked_list_get_last_element(test_list)->next == NULL );
+
+  linked_list_push(caboose,"baz");
+  linked_list_append_list(test_list,caboose);
+  assert( strcmp(linked_list_get_last_element(test_list)->value,"baz") == 0 );
+
+  // REAL STUFF
   LINKED_LIST *list;
   FILE *file;
   char *read_string;
@@ -274,6 +278,7 @@ void basic_printing8 () {
     }
     refresh();
     read_char = getch();
+    if ( read_char == 'q' ) { break; }
     switch (read_char) {
       case KEY_DOWN:
         current_line++;
@@ -286,4 +291,5 @@ void basic_printing8 () {
     }
   }
   endwin();
+  linked_list_free(list);
 }
