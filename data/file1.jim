@@ -1,0 +1,9 @@
+[person]
+first_name=joe
+last_name=stevens
+job=accountant
+
+[person]
+first_name=ashley
+last_name=bond
+job=spy

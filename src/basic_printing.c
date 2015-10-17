@@ -129,3 +129,26 @@ void basic_printing6 () {
   getch();
   endwin();
 }
+
+void basic_printing7 () {
+  int current_char, row, col;
+  FILE *file;
+  int y,x;
+
+  file = fopen("./data/file1.jim","r");
+  if ( file == NULL ) {
+    perror("\033[0;31mcannot open file.\n\033[0;39m");
+    exit(1);
+  }
+  initscr();
+  getmaxyx(stdscr,row,col);
+  while( (current_char = fgetc(file)) != EOF ) {
+    if ( current_char == ']' ) { attroff(A_UNDERLINE); }
+
+    printw("%c",current_char);
+
+    if ( current_char == '[' ) { attron(A_UNDERLINE); }
+  }
+  getch();
+  endwin();
+}
