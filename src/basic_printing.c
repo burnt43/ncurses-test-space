@@ -218,6 +218,43 @@ int linked_list_append_list(LINKED_LIST *first_list, LINKED_LIST *second_list) {
   return 0;
 }
 
+int linked_list_length(LINKED_LIST *list) {
+  int result = 0;
+  if ( linked_list_has_value(list) ) {
+    for ( LINKED_LIST *iter = list; iter != NULL; iter = iter->next ) {
+      result++;
+    }
+  } else {
+    return 0;
+  }
+  return result;
+}
+
+char** linked_list_as_double_pointer(LINKED_LIST *list) {
+  char** result = (char**)malloc( linked_list_length(list) * sizeof(char*) );
+  int position  = 0;
+  for ( LINKED_LIST *iter = list; iter != NULL; iter = iter->next ) {
+    char *s = (char*)malloc(strlen(iter->value) * sizeof(char));
+    strcpy(s,iter->value);
+    *(result+position) = s;
+    position++;
+  }
+  return result;
+}
+
+void demo_function () {
+  int  j = 0x006E6F73;
+  char x = 'r';
+  char y = 'a';
+  char z = 'C';
+  int  i = 0x2D2D2D00;
+  char a = 'm';
+  char b = 'i';
+  char c = 'J';
+  assert( strcmp(&c,"Jim") == 0 );
+  assert( strcmp(&c+8,"Carson") == 0 );
+}
+
 void basic_printing8 () {
   // ASSERTIONS
   LINKED_LIST *test_list = linked_list_new();
@@ -225,57 +262,73 @@ void basic_printing8 () {
 
   assert( test_list->value == NULL );
   assert( test_list->next == NULL );
+  assert( linked_list_length(test_list) == 0 );
 
   linked_list_push(test_list,"foo");
   assert( strcmp(test_list->value,"foo") == 0 );
   assert( test_list->next == NULL );
   assert( strcmp(linked_list_get_last_element(test_list)->value,"foo") == 0 );
   assert( linked_list_get_last_element(test_list)->next == NULL );
+  assert( linked_list_length(test_list) == 1 );
 
   linked_list_push(test_list,"bar");
   assert( strcmp(test_list->value,"foo") == 0 );
   assert( test_list->next != NULL );
   assert( strcmp(linked_list_get_last_element(test_list)->value,"bar") == 0 );
   assert( linked_list_get_last_element(test_list)->next == NULL );
+  assert( linked_list_length(test_list) == 2 );
 
   linked_list_push(caboose,"baz");
   linked_list_append_list(test_list,caboose);
   assert( strcmp(linked_list_get_last_element(test_list)->value,"baz") == 0 );
+  assert( linked_list_length(test_list) == 3 );
+
+  char **list_as_double_pointer = linked_list_as_double_pointer(test_list);
+  assert( strcmp( (char *)*(list_as_double_pointer+0), "foo" ) == 0 );
+  assert( strcmp( (char *)*(list_as_double_pointer+1), "bar" ) == 0 );
+  assert( strcmp( (char *)*(list_as_double_pointer+2), "baz" ) == 0 );
+
+  linked_list_free(test_list);
+  linked_list_free(caboose);
+  free(list_as_double_pointer);
 
   // REAL STUFF
   LINKED_LIST *list;
   FILE *file;
   char *read_string;
-  const int WIDTH = 120;
   int max_row,max_col;
   int current_line = 0;
   int read_char;
 
-  list       = linked_list_new();
-  file       = fopen("./data/file2.txt","r");
+
+  initscr();
+  noecho();
+  keypad(stdscr,TRUE);
+  getmaxyx(stdscr,max_row,max_col);
+
+  const int WIDTH = max_col-2;
+
+  list        = linked_list_new();
+  file        = fopen("./data/file2.txt","r");
   read_string = (char*)malloc(WIDTH * sizeof(char));
 
   while ( (read_string = fgets(read_string,WIDTH,file)) != NULL ) {
     linked_list_push(list,read_string);
   }
 
-  initscr();
-  noecho();
-  keypad(stdscr,TRUE);
-  getmaxyx(stdscr,max_row,max_col);
-  while ( true ) {
-    move(0,0);
+  char **broken_up_strings = linked_list_as_double_pointer(list);
+  const int MAX_LINES      = linked_list_length(list);
+  linked_list_free(list);
 
-    int i = 0;
-    int upper_range = current_line+(max_row-10);
-    for ( LINKED_LIST *iterator = list; iterator != NULL; iterator = iterator->next ) {
-      if ( i >= current_line && i < upper_range ) {
-        printw("%s\n",iterator->value);
-      } else if ( i >= upper_range ) {
-        break;
-      }
-      i++;
+  while ( true ) {
+    int current_row = 0;
+    move(0,0);
+    for ( int i = current_line; i < current_line+(max_row-10); i++ ) {
+      printw("%s",(char*)*(broken_up_strings+i));
+      current_row++;
+      move(current_row,0);
     }
+
     refresh();
     read_char = getch();
     if ( read_char == 'q' ) { break; }
@@ -291,5 +344,4 @@ void basic_printing8 () {
     }
   }
   endwin();
-  linked_list_free(list);
 }
