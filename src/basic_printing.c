@@ -323,7 +323,7 @@ void basic_printing8 () {
   while ( true ) {
     int current_row = 0;
     move(0,0);
-    for ( int i = current_line; i < current_line+(max_row-10); i++ ) {
+    for ( int i = current_line; i < current_line+(max_row-5); i++ ) {
       printw("%s",(char*)*(broken_up_strings+i));
       current_row++;
       move(current_row,0);
@@ -343,5 +343,94 @@ void basic_printing8 () {
         break;
     }
   }
+  endwin();
+}
+
+void basic_printing9() {
+  int max_x, max_y;
+  initscr();
+  start_color();
+
+  getmaxyx(stdscr,max_y,max_x);
+
+  init_pair(1,COLOR_CYAN,COLOR_BLACK);
+  init_pair(2,COLOR_RED,COLOR_BLACK);
+
+  for ( int i = 0; i < max_y; i++ ) {
+    mvprintw(i,0,"Lorem ipsum dolor sit amet, consectetur adipiscing elit");
+    mvchgat(i,10,-1,A_BOLD,(i%2)+1,NULL);
+
+  }
+  refresh();
+  getch();
+  endwin();
+}
+  
+typedef struct simple_menu {
+  WINDOW *window;
+  char **choices;
+  int current_position;
+  int num_choices;
+} SIMPLE_MENU;
+
+SIMPLE_MENU* simple_menu_create(int height, int width, int pos_y, int pos_x, int num_args, ...) {
+  SIMPLE_MENU *result;
+
+  result = (SIMPLE_MENU*)malloc( sizeof(SIMPLE_MENU) );
+  result->window  = newwin(height,width,pos_y,pos_x);
+  result->choices = (char**)malloc( num_args * sizeof(char*) );
+  result->current_position = 0;
+  result->num_choices = num_args;
+
+  va_list valist;
+  va_start(valist,num_args);
+  for ( int i = 0; i < num_args; i++ ) {
+    char *tmp = va_arg(valist,char*);
+    char *allocated_string = (char*)malloc( strlen(tmp) * sizeof(char) );
+    strcpy(allocated_string,tmp);
+    *(result->choices + i) = allocated_string;
+  }
+  va_end(valist);
+  return result;
+}
+
+char* simple_menu_get_choice(SIMPLE_MENU *self,int choice_num) {
+  return *(self->choices + choice_num);
+}
+
+void simple_menu_draw(SIMPLE_MENU *self) {
+  box(self->window,0,0);
+  mvwprintw( self->window, self->current_position + 1, 2, "->" );
+  for ( int i = 0; i < self->num_choices; i++ ) {
+    mvwprintw(self->window,i+1,5,"%s",simple_menu_get_choice(self,i));
+  }
+  wrefresh(self->window);
+}
+
+void simple_menu_destroy(SIMPLE_MENU *self) {
+  //dealloc choice strings
+  for ( int i = 0; i < self->num_choices; i++ ) {
+    free( *(self->choices + i) );
+  }
+  free(self->choices);
+  wborder(self->window,' ',' ',' ',' ',' ',' ',' ',' ');
+  delwin(self->window);
+  free(self);
+}
+
+void basic_printing10() {
+  SIMPLE_MENU *menu;
+  
+  initscr();
+  noecho();
+  curs_set(0);
+  refresh();
+
+  menu = simple_menu_create(7,20,0,0,3,"James","Edward","Carson");
+  simple_menu_draw(menu);
+
+  getch();
+
+  simple_menu_destroy(menu);
   endwin();
 }
