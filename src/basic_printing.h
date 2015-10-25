@@ -16,3 +16,4 @@ void basic_printing7();
 void basic_printing8();
 void basic_printing9();
 void basic_printing10();
+void some_testing();
