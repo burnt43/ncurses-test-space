@@ -501,4 +501,19 @@ void some_testing() {
     printf("%d: %X\n",i,*((unsigned char*)foo + i));
   }
   free(foo);
+
+  typedef struct _spam {
+    long a;
+    long b;
+    char c;
+  } SPAM;
+
+  typedef struct _egg {
+    char a;
+    char* b;
+    SPAM s;
+  } EGG;
+
+  printf("%d\n",sizeof(SPAM));
+  printf("%d\n",sizeof(EGG));
 }
