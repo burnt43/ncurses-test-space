@@ -471,16 +471,34 @@ void some_testing() {
   assert( *(bool*)((char*)win + 34) == win->_leaveok);
 
   typedef struct  _foobar {
-    char c;
-    unsigned long l;
-    char d;
+    unsigned char c0;
+    unsigned char c1;
+    unsigned char c2;
+    unsigned char c3;
+    unsigned char c4;
+    unsigned int c5;
+    unsigned int c6;
+    unsigned char c7;
+    unsigned long c8;
+    unsigned char c9;
   } FOOBAR;
-
   printf("%d\n",sizeof(FOOBAR));
 
-  FOOBAR foo;
-  foo.c = 10;
-  foo.l = 10;
+  FOOBAR *foo = (FOOBAR*)calloc(1,sizeof(FOOBAR));
 
-  printf("%d\n", *(((char*)&foo)+1) );
+  foo->c0 = -1;
+  foo->c1 = -1;
+  foo->c2 = -1;
+  foo->c3 = -1;
+  foo->c4 = -1;
+  foo->c5 = -1;
+  foo->c6 = -1;
+  foo->c7 = -1;
+  foo->c8 = -1;
+  foo->c9 = -1;
+
+  for ( int i = 0; i < sizeof(FOOBAR); i++ ) {
+    printf("%d: %X\n",i,*((unsigned char*)foo + i));
+  }
+  free(foo);
 }
