@@ -440,35 +440,42 @@ void some_testing() {
   win = initscr();
   endwin();
 
-  printf( "NCURSES_SIZE_T: %d\n",sizeof(NCURSES_SIZE_T) );
-  printf( "sizeof(bool): %d\n", sizeof(bool) );
-  printf( "sizeof(unsigned long): %d\n", sizeof(unsigned long) );
-  printf( "sizeof(attr_t): %d\n", sizeof(attr_t) );
-  printf( "sizeof(chtype): %d\n", sizeof(chtype) );
-  printf( "_cury: %d\n",win->_cury );
-  printf( "_curx: %d\n",win->_curx );
-  printf( "_maxy: %d\n",win->_maxy );
-  printf( "_maxx: %d\n",win->_maxx );
-  printf( "_begy: %d\n",win->_begy );
-  printf( "_begx: %d\n",win->_begx );
-  printf( "_flags: %x\n",win->_flags );
-  printf( "_attrs: %x\n",win->_attrs );
-  printf( "_bkgd: %x\n",win->_bkgd );
-  printf( "_notimeout: %d\n",win->_notimeout );
-  printf( "_clear: %d\n",win->_clear );
+  assert( (short*)((char*)win + 0)           == &(win->_cury) );
+  assert( (short*)((char*)win + 2)           == &(win->_curx) );
+  assert( (short*)((char*)win + 4)           == &(win->_maxy) );
+  assert( (short*)((char*)win + 6)           == &(win->_maxx) );
+  assert( (short*)((char*)win + 8)           == &(win->_begy) );
+  assert( (short*)((char*)win + 10)          == &(win->_begx) );
+  assert( (short*)((char*)win + 12)          == &(win->_flags) );
+  assert( (unsigned long*)((char*)win + 16)  == &(win->_attrs) );
+  assert( (unsigned long*)((char*)win + 24)  == &(win->_bkgd) );
+  assert( (bool*)((char*)win + 32)           == &(win->_notimeout) );
+  assert( (bool*)((char*)win + 33)           == &(win->_clear) );
+  assert( (bool*)((char*)win + 34)           == &(win->_leaveok) );
+  assert( (bool*)((char*)win + 35)           == &(win->_scroll) );
+  assert( (bool*)((char*)win + 36)           == &(win->_idlok) );
+  assert( (bool*)((char*)win + 37)           == &(win->_idcok) );
+  assert( (bool*)((char*)win + 38)           == &(win->_immed) );
+  assert( (bool*)((char*)win + 39)           == &(win->_sync) );
+  assert( (bool*)((char*)win + 40)           == &(win->_use_keypad) );
+  assert( (int*)((char*)win + 44)            == &(win->_delay) );
+  assert( (struct ldat**)((char*)win + 48)   == &(win->_line) );
+  assert( (short*)((char*)win + 56)          == &(win->_regtop) );
+  assert( (short*)((char*)win + 58)          == &(win->_regbottom) );
+  assert( (int*)((char*)win + 60)            == &(win->_parx) );
+  assert( (int*)((char*)win + 64)            == &(win->_pary) );
+  assert( (WINDOW**)((char*)win + 72)        == &(win->_parent) );
+  assert( (short*)((char*)win + 80)          == &(win->_pad._pad_y) );
+  assert( (short*)((char*)win + 82)          == &(win->_pad._pad_x) );
+  assert( (short*)((char*)win + 84)          == &(win->_pad._pad_top) );
+  assert( (short*)((char*)win + 86)          == &(win->_pad._pad_left) );
+  assert( (short*)((char*)win + 88)          == &(win->_pad._pad_bottom) );
+  assert( (short*)((char*)win + 90)          == &(win->_pad._pad_right) );
+  assert( (short*)((char*)win + 92)          == &(win->_yoffset) );
 
-  assert( *(short*)((char*)win + 0) == win->_cury );
-  assert( *(short*)((char*)win + 2) == win->_curx );
-  assert( *(short*)((char*)win + 4) == win->_maxy );
-  assert( *(short*)((char*)win + 6) == win->_maxx );
-  assert( *(short*)((char*)win + 8) == win->_begy );
-  assert( *(short*)((char*)win + 10) == win->_begx );
-  assert( *(short*)((char*)win + 12) == win->_flags);
-  assert( *(unsigned long*)((char*)win + 16) == win->_attrs);
-  assert( *(unsigned long*)((char*)win + 24) == win->_bkgd);
-  assert( *(bool*)((char*)win + 32) == win->_notimeout);
-  assert( *(bool*)((char*)win + 33) == win->_clear);
-  assert( *(bool*)((char*)win + 34) == win->_leaveok);
+  printf("sizeof(WINDOW): %d\n",sizeof(WINDOW));
+
+  printf("-----------------------------------------\n");
 
   typedef struct  _foobar {
     unsigned char c0;
@@ -482,7 +489,7 @@ void some_testing() {
     unsigned long c8;
     unsigned char c9;
   } FOOBAR;
-  printf("%d\n",sizeof(FOOBAR));
+  printf("sizeof(FOOBAR): %d\n",sizeof(FOOBAR));
 
   FOOBAR *foo = (FOOBAR*)calloc(1,sizeof(FOOBAR));
 
@@ -498,7 +505,10 @@ void some_testing() {
   foo->c9 = -1;
 
   for ( int i = 0; i < sizeof(FOOBAR); i++ ) {
-    printf("%d: %X\n",i,*((unsigned char*)foo + i));
+    printf("%2X ",*((unsigned char*)foo + i));
+    if ( (i+1) % 8 == 0 ) {
+      printf("\n");
+    }
   }
   free(foo);
 
@@ -514,6 +524,6 @@ void some_testing() {
     SPAM s;
   } EGG;
 
-  printf("%d\n",sizeof(SPAM));
-  printf("%d\n",sizeof(EGG));
+  printf("sizeof(SPAM): %d\n",sizeof(SPAM));
+  printf("sizeof(EGG):  %d\n",sizeof(EGG));
 }
