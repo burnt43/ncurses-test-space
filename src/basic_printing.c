@@ -437,8 +437,50 @@ void basic_printing10() {
 
 void some_testing() {
   WINDOW *win;
-  win = initscr();
+  WINDOW *copied_win;
+
+  copied_win = (WINDOW*)malloc(sizeof(WINDOW));
+
+  win        = initscr();
+  memcpy(copied_win,win,sizeof(WINDOW));
+
+  wprintw(copied_win,"Hello");
+  wgetch(copied_win);
+
   endwin();
+
+  printf("_cury: %d\n",win->_cury);
+  printf("_curx: %d\n",win->_curx);
+  printf("_maxy: %d\n",win->_maxy);
+  printf("_maxx: %d\n",win->_maxx);
+  printf("_begy: %d\n",win->_begy);
+  printf("_begx: %d\n",win->_begx);
+  printf("_flags: %d\n",win->_flags);
+  printf("_attrs: %d\n",win->_attrs);
+  printf("_bkgd: %d\n",win->_bkgd);
+  printf("_notimeout: %d\n",win->_notimeout);
+  printf("_clear: %d\n",win->_clear);
+  printf("_leaveok: %d\n",win->_leaveok);
+  printf("_scroll: %d\n",win->_scroll);
+  printf("_idlok: %d\n",win->_idlok);
+  printf("_idcok: %d\n",win->_idcok);
+  printf("_immed: %d\n",win->_immed);
+  printf("_sync: %d\n",win->_sync);
+  printf("_use_keypad: %d\n",win->_use_keypad);
+  printf("_delay: %d\n",win->_delay);
+  printf("_regtop: %d\n",win->_regtop);
+  printf("_regbottom: %d\n",win->_regbottom);
+  printf("_parx: %d\n",win->_parx);
+  printf("_pary: %d\n",win->_pary);
+  printf("_pad_y: %d\n",win->_pad._pad_y);
+  printf("_pad_x: %d\n",win->_pad._pad_x);
+  printf("_pad_top: %d\n",win->_pad._pad_top);
+  printf("_pad_left: %d\n",win->_pad._pad_left);
+  printf("_pad_bottom: %d\n",win->_pad._pad_bottom);
+  printf("_pad_right: %d\n",win->_pad._pad_right);
+  printf("_yoffset: %d\n",win->_yoffset);
+  printf("_parent: %p\n",win->_parent);
+  printf("_line: %p\n",win->_line);
 
   assert( (short*)((char*)win + 0)           == &(win->_cury) );
   assert( (short*)((char*)win + 2)           == &(win->_curx) );

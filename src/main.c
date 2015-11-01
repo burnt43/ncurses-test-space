@@ -2,6 +2,7 @@
 #include "basic_printing.h"
 
 int main (int argc, char** argv) {
+
   const int NUM_FUNCTIONS = 12;
   void (*functions[NUM_FUNCTIONS])();
   functions[0] = hello_world;
@@ -16,7 +17,6 @@ int main (int argc, char** argv) {
   functions[9] = basic_printing9;
 
   functions[10] = basic_printing10;
-
   functions[11] = some_testing;
 
   if ( argc == 2 ) {
@@ -24,5 +24,6 @@ int main (int argc, char** argv) {
   } else {
     printf("\033[0;31musage: ncurses_test_space.o TEST_NUM\n\033[0;39m");
   }
+
   return 0;
 }
